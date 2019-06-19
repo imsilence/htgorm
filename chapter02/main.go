@@ -1,8 +1,8 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -11,14 +11,14 @@ import (
 
 type User struct {
 	gorm.Model
-	Name string
+	Name     string
 	Password string
 	Birthday time.Time
-	Desc string
+	Desc     string
 }
 
 func main() {
-	db, err := gorm.Open("mysql", "root:881019@tcp(127.0.0.1:3306)/htgorm?loc=Asia%2FShanghai&charset=utf8mb4")
+	db, err := gorm.Open("mysql", "root:881019@tcp(127.0.0.1:3306)/htgorm?loc=Asia%2FShanghai&charset=utf8mb4&parseTime=True")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
