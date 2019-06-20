@@ -34,24 +34,24 @@ func main() {
 		}
 	}
 
-	var us []User
-	// 只查询name列
-	if err := db.Select("name").Find(&us).Error; err != nil {
+	var count int
+	if err := db.Model(&User{}).Count(&count).Error; err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(us)
+		fmt.Println(count)
 	}
 
-	// 查询name和password列
-	if err := db.Select([]string{"name", "password"}).Find(&us).Error; err != nil {
+	if err := db.Model(&User{}).Where("name like ?", "%6%").Count(&count).Error; err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(us)
+		fmt.Println(count)
 	}
 
-	if err := db.Select("name, password").Find(&us).Error; err != nil {
+	if err := db.Table("users").Where("name like ?", "%6%").Count(&count).Error; err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(us)
+		fmt.Println(count)
 	}
+
+
 }

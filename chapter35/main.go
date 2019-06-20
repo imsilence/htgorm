@@ -14,6 +14,13 @@ type User struct {
 	Password string `gorm:"default:'123!@#QWE'"` //设置默认值
 }
 
+
+func (u *User) BeforeUpdate(scope *gorm.Scope) error {
+	fmt.Println("Update:", u.Name, u.Password)
+	scope.SetColumn("Password", "test:" + u.Password)
+	return nil
+}
+
 func main() {
 	db, err := gorm.Open("mysql", "root:881019@tcp(127.0.0.1:3306)/htgorm?charset=utf8mb4&loc=Local&parseTime=True")
 	if err != nil {
@@ -34,24 +41,14 @@ func main() {
 		}
 	}
 
-	var us []User
-	// 只查询name列
-	if err := db.Select("name").Find(&us).Error; err != nil {
-		fmt.Println(err)
+	var u User
+	if err := db.First(&u).Error; err == nil {
+		db.Delete(&u)
 	} else {
-		fmt.Println(us)
+		fmt.Println(err)
 	}
 
-	// 查询name和password列
-	if err := db.Select([]string{"name", "password"}).Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
-	}
-
-	if err := db.Select("name, password").Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
-	}
+	db.Where("name like ?", "%5%").Delete(User{})
+	
+	db.Unscoped().Where("name like ?", "%6%").Delete(User{})
 }

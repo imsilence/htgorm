@@ -34,24 +34,12 @@ func main() {
 		}
 	}
 
-	var us []User
-	// 只查询name列
-	if err := db.Select("name").Find(&us).Error; err != nil {
+	var us01, us02 []User
+	// 分别查询按name降序、升序排列结果
+	if err := db.Order("name desc").Find(&us01).Order("name asc", true).Find(&us02).Error; err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(us)
-	}
-
-	// 查询name和password列
-	if err := db.Select([]string{"name", "password"}).Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
-	}
-
-	if err := db.Select("name, password").Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
+		fmt.Println(us01)
+		fmt.Println(us02)
 	}
 }

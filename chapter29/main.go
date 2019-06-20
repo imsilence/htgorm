@@ -21,8 +21,8 @@ func main() {
 		os.Exit(-1)
 	}
 	defer db.Close()
-	db.DropTableIfExists("users")
-	db.AutoMigrate(&User{})
+	// db.DropTableIfExists("users")
+	// db.AutoMigrate(&User{})
 	for i := 0; i < 10; i++ {
 		u := User{Name: fmt.Sprintf("kk_%d", i)}
 		if err := db.Create(&u).Error; err != nil {
@@ -34,24 +34,22 @@ func main() {
 		}
 	}
 
-	var us []User
-	// 只查询name列
-	if err := db.Select("name").Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
+	rows, err := db.Table("users").Select("count(*) as cnt, name").Group("name").Having("count(*) > ?", 3).Rows()
+	for rows.Next() {
+		var name string
+		var cnt int
+		if err := rows.Scan(&cnt, &name); err == nil {
+			fmt.Println(name, cnt)
+		} else {
+			fmt.Println(err)
+		}
 	}
 
-	// 查询name和password列
-	if err := db.Select([]string{"name", "password"}).Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
+	var rs []struct{
+		Cnt int
+		Name string
 	}
+	db.Table("users").Select("count(*) as cnt, name").Group("name").Having("count(*) > ?", 3).Scan(&rs)
+	fmt.Println(rs)
 
-	if err := db.Select("name, password").Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
-	}
 }

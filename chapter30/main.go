@@ -35,23 +35,7 @@ func main() {
 	}
 
 	var us []User
-	// 只查询name列
-	if err := db.Select("name").Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
-	}
+	db.Raw("select id, name, password from users where name like ?", "%9%").Scan(&us)
+	fmt.Println(us)
 
-	// 查询name和password列
-	if err := db.Select([]string{"name", "password"}).Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
-	}
-
-	if err := db.Select("name, password").Find(&us).Error; err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(us)
-	}
 }
